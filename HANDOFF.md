@@ -12,9 +12,12 @@ Generated on 2026-05-15 from `molvexa/molvexaweb` @ commit `9aea6a9`.
 This is a clean, **verified-working** scaffold. Status as of handoff:
 `npm install` done · `.env.local` has real DATABASE_URL / DATABASE_URL_UNPOOLED /
 ADMIN_PASSWORD / ADMIN_SESSION_SECRET · `tsc --noEmit` clean · 49/49 tests pass ·
-`npm run build` green. **Not done yet:** the schema has NOT been pushed to the new
-DB (`npx drizzle-kit migrate`), there is **no git repo** (`git init` when ready),
-and the brand TODOs below are unfilled. Read the rest of this file, then the docs
+`npm run build` green. **Update 2026-05-15:** schema migrated to the new DB
+(`npm run db:migrate` — migrations `0000`–`0002` applied successfully), git repo
+initialised and pushed to `github.com/vishnumelur/qora` (`main`), and a dev smoke
+test passed (`/` → 307 → `/admin`, `/admin` → 200 `Sign in | Invenex`). **Still
+not done:** the brand TODOs below are unfilled (no login was performed — the admin
+password was not used). Read the rest of this file, then the docs
 in `docs/` (`brainstorming-session-results.md`, `prd.md`, `architecture.md`,
 `front-end-spec.md`, `deployment.md`, `dev-log/`). The dev-log entries describe the
 *Molvexa* build history — treat them as engineering reference (esp. the react-pdf
@@ -67,6 +70,35 @@ All `Molvexa/MOLVEXA/molvexa` text + identifiers → `Invenex/INVENEX/invenex`
 
 ---
 
+## Git (done 2026-05-15)
+
+Repository initialised here and pushed to a **new, empty** GitHub repo. No secrets
+were committed — `.gitignore` line 34 (`.env*`) excludes `.env.local`; this was
+verified with `git check-ignore` plus a staged-content secret scan before the first
+commit (only the xkcd test fixture `correct horse battery staple` matched, in
+`tests/unit/password.test.ts` — not a real credential).
+
+| | |
+|---|---|
+| Remote (`origin`) | `https://github.com/vishnumelur/qora.git` |
+| Default branch | `main` (tracking `origin/main`) |
+| First commit | `48c2ed0` — `first commit` (112 files) |
+| Auth | `gh` CLI, account `vishnumelur`, `repo` scope (HTTPS credential helper) |
+
+Exact sequence used (the project's real `README.md` was kept — the GitHub
+boilerplate's `echo "# qora" >> README.md` was deliberately **not** run):
+
+```bash
+git init
+git add -A                       # .env.local excluded by .gitignore
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/vishnumelur/qora.git
+git push -u origin main
+```
+
+Subsequent pushes: `git push` (upstream already set).
+
 ## First-time setup
 
 ```bash
@@ -97,5 +129,9 @@ from Molvexa — they read `DATABASE_URL`/`ADMIN_*` from `.env.local`.
 Verified **in this directory with the real `.env.local`** (DB URLs + admin password
 filled by the owner): `tsc --noEmit` clean, `npm run build` green, 49/49 tests pass
 (`npm test` — server/pdf/domain + jsdom component tests, carried over unchanged).
-The admin pages were **not** opened in a browser here (schema not yet migrated to
-the new DB — run `npx drizzle-kit migrate`, then `npm run dev` and log in).
+
+**Re-verified 2026-05-15 after setup:** `tsc --noEmit` still clean, 49/49 tests
+still pass, schema migrated to the new DB, and `npm run dev` boots cleanly —
+`/` redirects (307) to `/admin`, which returns 200 and renders the rebranded
+`Sign in | Invenex` login page with no DB error. **Not yet exercised:** an
+authenticated session (no login performed) and PDF generation.
